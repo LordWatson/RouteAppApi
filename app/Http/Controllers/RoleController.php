@@ -2,12 +2,12 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\UserResource;
-use App\Models\User;
+use App\Http\Resources\RoleResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Spatie\Permission\Models\Role;
 
-class UserController extends Controller
+class RoleController extends Controller
 {
 
     /**
@@ -17,7 +17,7 @@ class UserController extends Controller
      */
     public function index()
     {
-        return response(UserResource::collection(User::all()), 200);
+        return response(RoleResource::collection(Role::all()), 200);
     }
 
     /**
@@ -34,22 +34,22 @@ class UserController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param User $user
+     * @param Role $role
      * @return Response
      */
-    public function show(User $user)
+    public function show(Role $role)
     {
-        return response(UserResource::make($user), 200);
+        return response(RoleResource::make($role), 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param User $user
+     * @param Role $role
      * @return Response
      */
-    public function update(Request $request, User $user)
+    public function update(Request $request, Role $role)
     {
         //
     }
@@ -57,10 +57,10 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param User $user
+     * @param Role $role
      * @return Response
      */
-    public function destroy(User $user)
+    public function destroy(Role $role)
     {
         //
     }

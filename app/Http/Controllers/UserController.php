@@ -53,7 +53,7 @@ class UserController extends Controller
     public function update(Request $request, User $user)
     {
         /*
-         * Name should be unique
+         * Email should be unique
          * If a user PUTs name through request with the existing name
          * So we tell the validation to ignore the unique rule when this happens
          * */

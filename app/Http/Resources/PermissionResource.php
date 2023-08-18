@@ -2,24 +2,23 @@
 
 namespace App\Http\Resources;
 
+use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\JsonResource;
 use Illuminate\Support\Facades\Auth;
 
-class UserResource extends JsonResource
+class PermissionResource extends JsonResource
 {
     /**
      * Transform the resource into an array.
      *
-     * @param  \Illuminate\Http\Request  $request
-     * @return array|\Illuminate\Contracts\Support\Arrayable|\JsonSerializable
+     * @return array<string, mixed>
      */
-    public function toArray($request)
+    public function toArray(Request $request): array
     {
         $returnArray = [
             'id' => $this->id,
             'name' => $this->name,
-            'email' => $this->email,
-            'roles' => $this->getRoleNames(),
+            'guard_name' => $this->guard_name,
         ];
 
         if(Auth::user()->hasRole('admin')){

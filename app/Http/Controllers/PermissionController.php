@@ -2,13 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Http\Resources\RoleResource;
+use App\Http\Resources\PermissionResource;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
-use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
-class RoleController extends Controller
+class PermissionController extends Controller
 {
 
     /**
@@ -18,7 +18,7 @@ class RoleController extends Controller
      */
     public function index()
     {
-        return response(RoleResource::collection(Role::all()), 200);
+        return response(PermissionResource::collection(Permission::all()), 200);
     }
 
     /**
@@ -31,19 +31,19 @@ class RoleController extends Controller
     {
         // Validate posted fields
         $request->validate([
-            'name' => ['required', 'string', 'max:255', 'unique:roles'],
+            'name' => ['required', 'string', 'max:255', 'unique:permissions'],
             'guard_name' => ['string'],
         ]);
 
-        // Create Role
-        $role = Role::create([
+        // Create Permission
+        $permission = Permission::create([
             'name' => $request->name,
             'guard_name' => $request->guard_name ?? 'web',
         ]);
 
         // Build return array
         $response = [
-            'role' => RoleResource::make($role),
+            'permission' => PermissionResource::make($permission),
         ];
 
         return response($response, 201);
@@ -52,22 +52,22 @@ class RoleController extends Controller
     /**
      * Display the specified resource.
      *
-     * @param Role $role
+     * @param Permission $permission
      * @return Response
      */
-    public function show(Role $role)
+    public function show(Permission $permission)
     {
-        return response(RoleResource::make($role), 200);
+        return response(PermissionResource::make($permission), 200);
     }
 
     /**
      * Update the specified resource in storage.
      *
      * @param Request $request
-     * @param Role $role
+     * @param Permission $permission
      * @return Response
      */
-    public function update(Request $request, Role $role)
+    public function update(Request $request, Permission $permission)
     {
         /*
          * Name should be unique
@@ -78,7 +78,7 @@ class RoleController extends Controller
             'name' => [
                 'string',
                 'max:255',
-                Rule::unique('roles')->ignore($role),
+                Rule::unique('permissions')->ignore($permission),
             ],
         ]);
 
@@ -87,12 +87,12 @@ class RoleController extends Controller
         $updateArray['updated_at'] = date('Y-m-d H:i:s');
 
         // Persist
-        $role->update($updateArray);
+        $permission->update($updateArray);
 
         // Build return array to show new resource and the fields that were changed in the update
         $returnArray = [
-            'role' => RoleResource::make($role),
-            'updated' => $role->getChanges(),
+            'permission' => PermissionResource::make($permission),
+            'updated' => $permission->getChanges(),
         ];
 
         return response($returnArray, 201);
@@ -101,10 +101,10 @@ class RoleController extends Controller
     /**
      * Remove the specified resource from storage.
      *
-     * @param Role $role
+     * @param Permission $permission
      * @return Response
      */
-    public function destroy(Role $role)
+    public function destroy(Permission $permission)
     {
         //
     }

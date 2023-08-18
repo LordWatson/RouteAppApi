@@ -27,5 +27,7 @@ Route::group(['middleware' => 'auth:sanctum'], function ()
         Route::apiResource('users', \App\Http\Controllers\UserController::class);
 
         Route::apiResource('roles', \App\Http\Controllers\RoleController::class);
+        Route::apiResource('permissions', \App\Http\Controllers\PermissionController::class);
+
     });
 });

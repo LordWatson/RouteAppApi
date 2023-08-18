@@ -6,6 +6,7 @@ use App\Http\Resources\UserResource;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -51,7 +52,36 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        /*
+         * Name should be unique
+         * If a user PUTs name through request with the existing name
+         * So we tell the validation to ignore the unique rule when this happens
+         * */
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => [
+                'string',
+                'required',
+                'email',
+                'max:255',
+                Rule::unique('users')->ignore($user),
+            ],
+        ]);
+
+        // Create array of values to update
+        $updateArray = $validated;
+        $updateArray['updated_at'] = date('Y-m-d H:i:s');
+
+        // Persist
+        $user->update($updateArray);
+
+        // Build return array to show new resource and the fields that were changed in the update
+        $returnArray = [
+            'role' => UserResource::make($user),
+            'updated' => $user->getChanges(),
+        ];
+
+        return response($returnArray, 201);
     }
 
     /**

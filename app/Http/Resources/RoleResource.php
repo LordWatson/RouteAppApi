@@ -22,6 +22,7 @@ class RoleResource extends JsonResource
         ];
 
         if(Auth::user()->hasRole('admin')){
+            $returnArray['permissions'] = $this->getPermissionNames();
             $returnArray['created_at'] = $this->created_at;
             $returnArray['updated_at'] = $this->updated_at;
         }

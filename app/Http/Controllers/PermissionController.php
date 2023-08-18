@@ -7,6 +7,7 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
 use Spatie\Permission\Models\Permission;
+use Spatie\Permission\Models\Role;
 
 class PermissionController extends Controller
 {
@@ -106,6 +107,47 @@ class PermissionController extends Controller
      */
     public function destroy(Permission $permission)
     {
-        //
+        $permission->delete();
+
+        return response([
+            'message' => 'Permission deleted successfully',
+        ], 200);
+    }
+
+    /**
+     * Assign a permission to a model
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function assign(Request $request)
+    {
+        // Validate posted fields
+        $request->validate([
+            'permission' => ['integer', 'exists:permissions,id'],
+            'role' => ['integer', 'exists:roles,id'],
+        ]);
+
+        // Find records
+        $permission = Permission::find($request->permission);
+        $role = Role::find($request->role);
+
+        // Check if the role already has the permission assigned
+        if($role->hasPermissionTo($permission->name)){
+            return response([
+                'message' => 'Permission is already assigned to role',
+                'permission' => $permission->id,
+                'role' => $role->id,
+            ], 200);
+        }
+
+        // Assign permission to role
+        $role->givePermissionTo($permission);
+
+        return response([
+            'message' => 'Permission assigned to role successfully',
+            'permission' => $permission->id,
+            'role' => $role->id,
+        ], 201);
     }
 }

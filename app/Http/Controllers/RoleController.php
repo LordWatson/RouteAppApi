@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Resources\RoleResource;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Validation\Rule;
@@ -106,6 +107,47 @@ class RoleController extends Controller
      */
     public function destroy(Role $role)
     {
-        //
+        $role->delete();
+
+        return response([
+            'message' => 'Role deleted successfully',
+        ], 200);
+    }
+
+    /**
+     * Assign a permission to a model
+     *
+     * @param Request $request
+     * @return Response
+     */
+    public function assign(Request $request)
+    {
+        // Validate posted fields
+        $request->validate([
+            'role' => ['integer', 'exists:roles,id'],
+            'user' => ['integer', 'exists:users,id'],
+        ]);
+
+        // Find records
+        $role = Role::find($request->role);
+        $user = User::find($request->user);
+
+        // Check if the user already has the role assigned to them
+        if($user->hasRole($role->name)){
+            return response([
+                'message' => 'Role is already assigned to user',
+                'role' => $role->id,
+                'user' => $user->id,
+            ], 200);
+        }
+
+        // Assign role to user
+        $user->assignRole($role->name);
+
+        return response([
+            'message' => 'Role assigned to user successfully',
+            'role' => $role->id,
+            'user' => $user->id,
+        ], 201);
     }
 }
